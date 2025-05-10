@@ -1,80 +1,29 @@
-<?php
+@extends('layout')
+@section('content')
 
-namespace App\Http\Controllers;
+<div class="card">
+    <div class="card-header">Batches</div>
+    <div class="card-body">
 
-use Illuminate\Http\Request;
+        <form action="{{ url('batches') }}" method="post">
+            @csrf
+            <label>Batch Name</label><br>
+            <input type="text" name="name" id="name" class="form-control"><br>
 
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Response;
-use App\Models\Batch;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
+            <label>Course</label><br>
+            <select name="course_id" id="course_id" class="form-control">
+                @foreach($courses as $id => $name)
+                    <option value="{{ $id }}">{{ $name }}</option>
+                @endforeach
+            </select><br>
 
-class BatchController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $batches = Batch::all();
-        return view ('batches.index')->with('batches', $batches);
-    
-    }
+            <label>Start Date</label><br>
+            <input type="text" name="start_date" id="start_date" class="form-control"><br>
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('batches.create');
-    }
+            <input type="submit" value="Save" class="btn btn-success">
+        </form>
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        $input = $request->all();
-        Batch::create($input);
-        return redirect('batches')->with('flash_message', 'Batch Addedd!');
-    }
+    </div>
+</div>
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        $batches = Batch::find($id);
-        return view('batches.show')->with('batches', $batches);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        $batches = Batch::find($id);
-        return view('batches.edit')->with('batches', $batches);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        $batches = Batch::find($id);
-        $input = $request->all();
-        $batches->update($input);
-        return redirect('batches')->with('flash_message', 'Batch Updated!'); 
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        Batch::destroy($id);
-        return redirect('batches')->with('flash_message', 'Batch deleted!');
-    }
-}
+@endsection
