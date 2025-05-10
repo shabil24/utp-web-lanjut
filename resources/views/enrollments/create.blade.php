@@ -1,26 +1,82 @@
-@extends('layout')
-@section('content')
- 
-<div class="card">
-  <div class="card-header">Enrollment Page</div>
-  <div class="card-body">
-      
-      <form action="{{ url('enrollments') }}" method="post">
-        {!! csrf_field() !!}
-        <label>Enroll No</label></br>
-        <input type="text" name="enroll_no" id="enroll_no" class="form-control"></br>
-        <label>Batch ID</label></br>
-        <input type="text" name="batch_id" id="batch_id" class="form-control"></br>
-        <label>Student ID</label></br>
-        <input type="text" name="student_id" id="student_id" class="form-control"></br>
-        <label>Join Date</label></br>
-        <input type="text" name="join_date" id="join_date" class="form-control"></br>
-        <label>Fee</label></br>
-        <input type="text" name="fee" id="fee" class="form-control"></br>
-        <input type="submit" value="Save" class="btn btn-success"></br>
-    </form>
-   
-  </div>
-</div>
- 
-@stop
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use App\Models\Enrollment;
+use App\Models\Student;
+use App\Models\Batch;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\View\View;
+
+class EnrollmentController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $enrollments = Enrollment::all();
+        return view('enrollments.index')->with('enrollments', $enrollments);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        $batches = Batch::pluck('name', 'id');
+        $students = Student::pluck('name', 'id');
+        return view('enrollments.create', compact('batches', 'students'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $input = $request->all();
+        Enrollment::create($input);
+        return redirect('enrollments')->with('flash_message', 'Enrollment Added');
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        $enrollments = Enrollment::find($id);
+        return view('enrollments.show')->with('enrollments', $enrollments);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        $enrollments = Enrollment::Find($id);
+        return view('enrollments.edit')->with('enrollments', $enrollments);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        $enrollments = Enrollment::Find($id);
+        $input = $request->all();
+        $enrollments->update($input);
+        return redirect('enrollments')->with('flash_message', 'Enrollment Updated!');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        Enrollment::destroy($id);
+        return redirect('enrollments')->with('flash_message', 'Enrollments Delete');
+    }
+}
